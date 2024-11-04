@@ -1,10 +1,11 @@
 class Player:
-    def __init__(self,Faction, Name, level=1, status=1, health=1000): 
+    def __init__(self, Name, level=1): 
         self.Name = Name
         self.level = level
-        self.status = status
+        self.status = 1
         self.Faction = []
-        self.health = health
+        self.health = 1000
+        self.MagicalObjects = []
 
 
     def getattack(self, attacker):
@@ -54,11 +55,6 @@ class Player:
             return print("you are not in this Faction")
         else :
             self.Faction.remove(Faction)
-
-
-
-    
-
 
 
 
