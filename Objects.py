@@ -31,7 +31,7 @@ class Player:
     
     
     def Attack(self, victim ):
-        flag = self.isallie(self, victim)
+        flag = self.isallie(victim)
         if flag: 
             return print("you Cant damage him is your allie")
         else:
