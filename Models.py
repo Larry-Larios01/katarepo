@@ -50,13 +50,16 @@ class Player:
             self.max_health = 1500
         lenght_of_list = len(self.faction)
         faction_level = self.level+1 * 3
-        if self.level== 1 & lenght_of_list >= 3:
+        if self.level== 1 and lenght_of_list >= 3 and self.total_damage >=1000:
             self.level = 2
 
-        if self.level == 2 & lenght_of_list >= 6:
+        if self.level == 2 and lenght_of_list >= 6 and self.total_damage >= 2000:
             self.level = 3
 
-        if  self.level >= 3 and self.level<10 and lenght_of_list == faction_level:
+        if self.level == 3 and lenght_of_list >= 9 and self.total_damage>= 3000:
+            self.level = 4
+
+        if  self.level >= 4 and self.level<10 and lenght_of_list >= faction_level:
             self.level += 1
 
 
@@ -65,8 +68,8 @@ class Player:
         for Faction in self.faction:
             if Faction in victim.faction:
                 return True
-            else:
-                return False
+            
+        return False
     
     
     
@@ -97,7 +100,11 @@ class Player:
 
     def drop_magical_objects(self):
         if self.status == False:
-            self.magical_objects.clear()            
+            self.magical_objects.clear()      
+
+    def get_magical_objects(self,magical_object):
+        self.magical_objects.append(magical_object)
+              
 
 class MagicalObjects:
     def __init__(self,name,type, value) :
