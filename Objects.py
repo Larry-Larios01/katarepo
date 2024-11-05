@@ -1,14 +1,20 @@
 class Player:
     def __init__(self, Name, level=1): 
-        self.Name = Name
+        self.name = Name
         self.level = level
-        self.status = 1
-        self.Faction = []
+        self.status = True
+        self.faction = []
         self.health = 1000
-        self.MagicalObjects = []
+        self.max_health= 1000
+        self.magical_objects = []
 
 
-    def getattack(self, attacker):
+    def get_health(self, magical_object):
+        if magical_object.type == "health":
+            self.health += magical_object.value
+
+
+    def apllydamage(self, attacker):
         if self.level - attacker.level >= 5 :
             self.health = self.health * 0.5
 
@@ -17,11 +23,11 @@ class Player:
 
         if self.health <=0 :
             self.health = 0
-            self.status = 0
+            self.status = False
 
      
 
-    def isallie(self, victim):
+    def is_allie(self, victim):
         for Faction in self.Faction:
             if Faction in victim.Faction:
                 return True
@@ -30,7 +36,7 @@ class Player:
     
     
     
-    def Attack(self, victim ):
+    def attack(self, victim ):
         flag = self.isallie(victim)
         if flag: 
             return print("you Cant damage him is your allie")
@@ -41,7 +47,7 @@ class Player:
 
     
 
-    def EnterInAFaction(self, Faction):
+    def enter_in_a_faction(self, Faction):
         if Faction in self.Faction:
             return print("you are aleredy in this faction")
         
@@ -50,11 +56,18 @@ class Player:
 
 
 
-    def LeaveFaction(self, Faction):
+    def leave_faction(self, Faction):
         if Faction in self.Faction:
             return print("you are not in this Faction")
         else :
             self.Faction.remove(Faction)
+
+
+class MagicalObjects:
+    def __init__(self,name,type, value) :
+        self.name = name
+        self.type = type
+        self.value = value
 
 
 
