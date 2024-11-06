@@ -74,13 +74,20 @@ def test_given_use_the_weapon_when_hit_another_player_then_the_opponent_has_sust
     assert p2.health == 400
 
 def test_given_the_player_is_lvl_1_when_he_enter_in_3_Factions_And_have_1000_damage_then_he_upgrade_level():
-    p1 = Player("larry",1)
-    p1.total_damage = 1010
+    #given
+    p1 = Player("larry",2)
+    #when
+    p1.total_damage = 2010
     p1.enter_in_a_faction("locos")
     p1.enter_in_a_faction("locos2")
     p1.enter_in_a_faction("locos3")
-    p1.change_level()
-    assert p1.level == 2
+    p1.enter_in_a_faction("locos")
+    p1.enter_in_a_faction("locos2")
+    p1.enter_in_a_faction("locos3")
+    
+    #then
+    #p1.change_level()
+    assert p1.level == 3
 
 def test_given_the_player_is_lvl_6_when_he_enter_in_21_then_he_upgrade_level():
     #given
@@ -107,7 +114,7 @@ def test_given_the_player_is_lvl_6_when_he_enter_in_21_then_he_upgrade_level():
     p1.enter_in_a_faction("locos")
     p1.enter_in_a_faction("locos2")
     p1.enter_in_a_faction("locos3")
-    p1.change_level()
+    #p1.change_level()
     #then
     assert p1.level == 7
 

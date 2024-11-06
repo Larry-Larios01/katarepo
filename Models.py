@@ -42,14 +42,18 @@ class Player:
         if self.status == 0:
             return
         if player2.status == 0:
-            self.total_damage += self.health
-            
+            if player2.level < 6:
+                self.total_damage += player2.max_health
+            elif player2.level >= 6:
+                self.total_damage += player2.max_health
+        self.change_level()
+
     def change_level(self):
         if self.level >= 6:
             self.health = 1500
             self.max_health = 1500
         lenght_of_list = len(self.faction)
-        faction_level = self.level+1 * 3
+        faction_level = len(self.faction)//3
         if self.level== 1 and lenght_of_list >= 3 and self.total_damage >=1000:
             self.level = 2
 
@@ -59,8 +63,11 @@ class Player:
         if self.level == 3 and lenght_of_list >= 9 and self.total_damage>= 3000:
             self.level = 4
 
-        if  self.level >= 4 and self.level<10 and lenght_of_list >= faction_level:
-            self.level += 1
+        if  self.level >= 4 and self.level<10 and self.level < faction_level:
+            if faction_level > 10:
+                self.level = 10
+            elif faction_level < 10:
+                self.level = faction_level
 
 
 
@@ -87,6 +94,8 @@ class Player:
     def enter_in_a_faction(self, Faction):
         if Faction is not self.faction:
             self.faction.append(Faction)
+            self.change_level()
+
         
             
 
@@ -111,6 +120,8 @@ class MagicalObjects:
         self.name = name
         self.type = type
         self.value = value
+
+
 
 
 
