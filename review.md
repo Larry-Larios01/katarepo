@@ -22,3 +22,9 @@
 11. investigar el lenguaje de la terminal
 12. ls y dir que es
 13. vimtutor
+
+14. no entendi genradores
+15. diferencia entre parametro yargumento
+16. porque eligiria un set antes que una lista
+17. diferencia entre una funion que te retorna un generator y uno que te retorna una lista
+18. dos funciones que usaba antes que no sabia que usaban generator range()
