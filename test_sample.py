@@ -2,7 +2,7 @@
 
 from Models import Player, MagicalObjects
 
-
+from pattern_desings.iterator import MyIterator_Reverse, MyIterator_Random
 
 
 
@@ -149,4 +149,15 @@ def test_given_the_player_has_magical_objects_when_he_dies_then_he_drop_the_magi
 
 
 
+def test_given_we_have_a_list_when_we_need_to_take_that_in_reverse_then_the_iterator_give_us_the_list_in_reverse():
+    items = [1, 2, 3]
+    my_iter = MyIterator_Reverse(items)
+    result = [item for item in my_iter]
+    assert result == [3,2,1]
 
+
+def test_given_we_have_a_list_when_we_need_to_take_that_with_random_items_then_the_iterator_give_us_the_list_random():
+    items = [1,2,3]
+    my_iter = MyIterator_Random(items)
+    result = [item for item in my_iter]
+    assert my_iter != result

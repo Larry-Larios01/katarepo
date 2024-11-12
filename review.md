@@ -11,20 +11,57 @@
 
 
 #
-6. investigar gitignore de python y arreglarlo en github
+
+
+
+#todo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#done nov/8
+6. investigar gitignore de python y arreglarlo en github #no tiene que aparecer lo borrado en ningun lado
 
 7. como eliminar archivos o carpetas de commits antiguos sin reescribir la historia
 
 8. diferencia entre un expression y un statement
 
 9. leer 6,7,8 leer con tu tiempo intentandole agarrar 
+
+
 10. investigar que es echo path en la terminal
-11. investigar el lenguaje de la terminal
+
 12. ls y dir que es
+
+11. investigar el lenguaje de la terminal se llama bash
+
+
+
 13. vimtutor
 
-14. no entendi genradores
 15. diferencia entre parametro yargumento
+
+#done november 9
+
 16. porque eligiria un set antes que una lista
+
 17. diferencia entre una funion que te retorna un generator y uno que te retorna una lista
 18. dos funciones que usaba antes que no sabia que usaban generator range()
+
+
+#todo
+
+19. leer el with bien
+20. crear 2 content manager 

@@ -9,6 +9,8 @@ class Player:
         self.total_damage = 0
         self.magical_objects = []
 
+        
+
 
     def get_health(self, magical_object):
         if magical_object.type == "health":
