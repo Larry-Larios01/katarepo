@@ -35,5 +35,67 @@ class MyIterator_Random:
     
 
 
+class MyIterator_Filter:
+    def __init__(self, items, func):
+        self.items = items
+        self.func = func
+        self.index = 0
+
+    def __iter__(self):
+        return self  
+
+    def __next__(self):
+        while self.index < len(self.items):
+            item = self.items[self.index]
+            self.index += 1
+            if self.func(item):
+                return item
+                
+        raise StopIteration
     
+class MyIterator_Map:
+    def __init__(self, items, func):
+        self.items = items
+        self.func = func
+        self.index = 0
+
+    def __iter__(self):
+        return self  
+
+    def __next__(self):
+        while self.index < len(self.items):
+            item = self.items[self.index]
+            self.index += 1
+            item_final= self.func(item)
+            return item_final
+                
+                
+        raise StopIteration
+
+
+class MyIterator_Find:
+    def __init__(self, items, item):
+        self.items = items
+        self.item_final = item
+        self.index = 0
+
+    def __iter__(self):
+        return self  
+
+    def __next__(self):
+        if self.item_final in self.items:
+
+            while self.index < len(self.items):
+                item = self.items[self.index]
+                self.index += 1
+                if item == self.item_final: 
+                    return item
+                
+                
+        raise StopIteration
+
+
+       
+
+
     
