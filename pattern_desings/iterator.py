@@ -2,7 +2,7 @@ import random
 
 
 
-class MyIterator_Reverse:
+class MyIteratorReverse:
     def __init__(self, items):
         self.items = items
         self.index = len(items)-1
@@ -17,7 +17,7 @@ class MyIterator_Reverse:
         self.index += -1
         return item
 
-class MyIterator_Random:
+class MyIteratorRandom:
     def __init__(self, items):
         self.items = items
         self.indexs = random.sample(items, len(items))
@@ -35,7 +35,7 @@ class MyIterator_Random:
     
 
 
-class MyIterator_Filter:
+class MyIteratorFilter:
     def __init__(self, items, func):
         self.items = items
         self.func = func
@@ -53,7 +53,7 @@ class MyIterator_Filter:
                 
         raise StopIteration
     
-class MyIterator_Map:
+class MyIteratorMap:
     def __init__(self, items, func):
         self.items = items
         self.func = func
@@ -63,7 +63,7 @@ class MyIterator_Map:
         return self  
 
     def __next__(self):
-        while self.index < len(self.items):
+        if self.index < len(self.items):
             item = self.items[self.index]
             self.index += 1
             item_final= self.func(item)
@@ -73,7 +73,7 @@ class MyIterator_Map:
         raise StopIteration
 
 
-class MyIterator_Find:
+class MyIteratorFind:
     def __init__(self, items, item):
         self.items = items
         self.item_final = item
