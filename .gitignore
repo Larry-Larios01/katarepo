@@ -13,3 +13,5 @@ __pycache__/
 *.swo
 .idea/
 .vscode/
+
+.env

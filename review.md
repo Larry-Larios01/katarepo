@@ -43,7 +43,7 @@
 
 10. investigar que es echo path en la terminal
 
-12. ls y dir que es
+12. ls y dir que es #no investigue bien 
 
 11. investigar el lenguaje de la terminal se llama bash
 
@@ -51,7 +51,7 @@
 
 13. vimtutor
 
-15. diferencia entre parametro yargumento
+15. diferencia entre parametro y argumento
 
 #done november 9
 
@@ -59,9 +59,11 @@
 
 17. diferencia entre una funion que te retorna un generator y uno que te retorna una lista
 18. dos funciones que usaba antes que no sabia que usaban generator range()
+lazy
+eager
 
-
-#todo
+#done november 11
 
 19. leer el with bien
 20. crear 2 content manager 
+21. capslock sea escape
