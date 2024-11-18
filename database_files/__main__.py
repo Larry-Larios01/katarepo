@@ -3,7 +3,7 @@ from database_files.conexion_with_postgres import run_query
 import argparse
 
 
-def take_path():
+def take_path()-> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", default=".env",help="change the credentials",)
     parser.add_argument("--output", default="string", help="you can select the output")

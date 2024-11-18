@@ -1,5 +1,13 @@
+class MagicalObjects:
+    def __init__(self,name,type, value) :
+        self.name = name
+        self.type = type
+        self.value = value
+
+
+
 class Player:
-    def __init__(self, Name, level=1): 
+    def __init__(self, Name : str, level=1): 
         self.name = Name
         self.level = level
         self.status = True
@@ -9,16 +17,18 @@ class Player:
         self.total_damage = 0
         self.magical_objects = []
 
+
+
         
 
 
-    def get_health(self, magical_object):
+    def get_health(self, magical_object: MagicalObjects)-> None:
         if magical_object.type == "health":
             self.health += magical_object.value
             if self.health > self.max_health:
                 self.health = self.max_health
 
-    def use_weapon(self, magical_object, player2):
+    def use_weapon(self, magical_object: MagicalObjects, player2: "Player")-> None:
         if magical_object.type == "damage":
             player2.health -= magical_object.value
             if player2.health <= 0:
@@ -28,7 +38,7 @@ class Player:
 
     
 
-    def aplly_damage(self, victim):
+    def aplly_damage(self, victim: "Player")-> None:
         if self.level - victim.level <= 5 :
             victim.health = victim.health * 0.5
 
@@ -40,7 +50,7 @@ class Player:
             victim.status = False
             victim.drop_magical.objects()
     
-    def game_results(self, player2):
+    def game_results(self, player2: "Player")-> None:
         if self.status == 0:
             return
         if player2.status == 0:
@@ -50,7 +60,7 @@ class Player:
                 self.total_damage += player2.max_health
         self.change_level()
 
-    def change_level(self):
+    def change_level(self)-> None:
         if self.level >= 6:
             self.health = 1500
             self.max_health = 1500
@@ -73,7 +83,7 @@ class Player:
 
 
 
-    def is_allie(self, victim):
+    def is_allie(self, victim: "Player")-> bool:
         for Faction in self.faction:
             if Faction in victim.faction:
                 return True
@@ -82,7 +92,7 @@ class Player:
     
     
     
-    def attack(self, victim ):
+    def attack(self, victim: "Player")-> None:
         flag = self.is_allie(victim)
         if not flag: 
             self.aplly_damage(victim)
@@ -117,11 +127,6 @@ class Player:
         self.magical_objects.append(magical_object)
               
 
-class MagicalObjects:
-    def __init__(self,name,type, value) :
-        self.name = name
-        self.type = type
-        self.value = value
 
 
 

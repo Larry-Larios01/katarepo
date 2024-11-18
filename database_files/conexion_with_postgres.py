@@ -5,7 +5,7 @@ import json
 
 
 
-def run_query(file_path, env, output):
+def run_query(file_path: str, env: str, output:str)-> any:
     load_dotenv(env)
 
     host = os.getenv("DB_HOST")
