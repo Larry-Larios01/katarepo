@@ -1,21 +1,25 @@
 class MagicalObjects:
-    def __init__(self,name,type, value) :
+    def __init__(self,name,type, value) -> None :
+        self.name: str = name
+        self.type: str = type
+        self.value: int = value
+
+class Faction:
+    def __init__(self, name) -> None:
         self.name = name
-        self.type = type
-        self.value = value
 
 
 
 class Player:
-    def __init__(self, Name : str, level=1): 
-        self.name = Name
-        self.level = level
-        self.status = True
-        self.faction = []
-        self.health = 1000
-        self.max_health= 1000
-        self.total_damage = 0
-        self.magical_objects = []
+    def __init__(self, Name : str, level=1)-> None: 
+        self.name: str = Name
+        self.level: int = level
+        self.status: bool= True
+        self.faction: list[Faction] = []
+        self.health: float = 1000
+        self.max_health: int= 1000
+        self.total_damage: float = 0
+        self.magical_objects: list[MagicalObjects] = []
 
 
 
@@ -103,7 +107,7 @@ class Player:
 
     
 
-    def enter_in_a_faction(self, Faction):
+    def enter_in_a_faction(self, Faction: Faction)-> None:
         if Faction is not self.faction:
             self.faction.append(Faction)
             self.change_level()
@@ -113,17 +117,17 @@ class Player:
 
 
 
-    def leave_faction(self, Faction):
+    def leave_faction(self, Faction: Faction)-> None:
         if Faction in self.faction:
             self.faction.remove(Faction)
         
             
 
-    def drop_magical_objects(self):
+    def drop_magical_objects(self) -> None:
         if self.status == False:
             self.magical_objects.clear()      
 
-    def get_magical_objects(self,magical_object):
+    def get_magical_objects(self,magical_object: MagicalObjects)-> None:
         self.magical_objects.append(magical_object)
               
 

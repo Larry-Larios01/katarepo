@@ -1,6 +1,6 @@
 
 
-from Models import Player, MagicalObjects
+from Models import Player, MagicalObjects, Faction
 
 #from pattern_desings.iterator import MyIterator_Reverse, MyIterator_Random, MyIterator_Filter, MyIterator_Map, MyIterator_Find
 
@@ -121,9 +121,10 @@ def test_given_the_player_is_lvl_6_when_he_enter_in_21_then_he_upgrade_level():
 def test_given_the_player_is_in_faction_when_he_leaves_the_faction_is_removed():
     #given
     p1 = Player("Larry",1)
-    p1.enter_in_a_faction("locos")
+    fact = Faction("locos")
+    p1.enter_in_a_faction(fact)
     #when
-    p1.leave_faction("locos")
+    p1.leave_faction(fact)
     #then
     assert len(p1.faction) == 0
 
