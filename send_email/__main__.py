@@ -1,9 +1,12 @@
-from send_email.mail import set_values_to_send_emails
+from send_email.mail import set_values_to_send_emails, run_csv
 import asyncio
 import argparse
+import json
+import time
 
 
 async def main():
+        start_time = time.perf_counter()
         parser = argparse.ArgumentParser()
         parser.add_argument("--env", default=".env",help="change the credentials")
         parser.add_argument("--source", help="you can select the file")
@@ -13,8 +16,12 @@ async def main():
     
         args = parser.parse_args()
 
-        end_time = await set_values_to_send_emails(args.source, args.fail_rate, args.concurrency)
-        print(end_time)
+        results = await run_csv(args.source, args.fail_rate, args.concurrency)
+        end_time = time.perf_counter()
+        time_final = end_time-start_time
+        results.time_total = time_final
+        results_json = json.dumps(results.__dict__, indent=4)
+        print(results_json)
 
 
     
@@ -30,4 +37,6 @@ async def main():
 
 
 if __name__ == "__main__":
-        asyncio.run(main())
+    asyncio.run(main())
+
+        
