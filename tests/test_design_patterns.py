@@ -1,6 +1,6 @@
 
 from pattern_desings.iterator import MyIteratorFilter, MyIteratorFind, MyIteratorMap, MyIteratorRandom, MyIteratorReverse
-from pattern_desings.strategy import OperationContext
+
 
 
 
