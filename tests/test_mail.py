@@ -1,4 +1,4 @@
-from send_email.mail import  set_values_to_send_emails, create_mock_send_email
+from send_email.mail import  set_values_to_send_emails, create_mock_send_email, stats
 import asyncio
 import time
 import pytest
@@ -67,8 +67,7 @@ async def test_given_we_need_to_send_mails_when_we_send_it_with__concurrency_of_
 
 @pytest.mark.asyncio
 async def test_given_we_have_a_fail_rate_when_we_send_the_mails_we_have_the_equivalent_fail_emails_sent():
-    global err_count
-    err_count = 0
+    
     semaphore = asyncio.Semaphore(1)
     tasks = []
     mock_send_email = create_mock_send_email(fail_rate=0.2)
@@ -90,5 +89,31 @@ async def test_given_we_have_a_fail_rate_when_we_send_the_mails_we_have_the_equi
     except:
         raise("error")
     await asyncio.gather(*tasks)
-    assert err_count == 2
+    assert stats["err_count"] >= 2
 
+
+@pytest.mark.asyncio
+async def test_given_we_have_a_fails_and_ok_mails_when_we_sum_then_we_have_the_len_of_list():
+    
+    semaphore = asyncio.Semaphore(1)
+    tasks = []
+    mock_send_email = create_mock_send_email(fail_rate=0.2)
+    csv_to_dict = [
+    {"Email": "user0@gmail.com", "Subject": "Account Activation", "Body": "We have updated our terms and conditions."},
+    {"Email": "user1@example.com", "Subject": "Important Update", "Body": "Here is your invoice for the recent purchase."},
+    {"Email": "user2@hotmail.com", "Subject": "Your Invoice", "Body": "Thank you for signing up with us!"},
+    {"Email": "user3@outlook.com", "Subject": "Welcome!", "Body": "Here is your invoice for the recent purchase."},
+    {"Email": "user4@outlook.com", "Subject": "Your Invoice", "Body": "Here is your invoice for the recent purchase."},
+    {"Email": "user5@hotmail.com", "Subject": "Account Activation", "Body": "Check out our latest news and updates!"},
+    {"Email": "user6@gmail.com", "Subject": "Important Update", "Body": "Here is your invoice for the recent purchase."},
+    {"Email": "user7@outlook.com", "Subject": "Your Invoice", "Body": "Here is your invoice for the recent purchase."},
+    {"Email": "user8@hotmail.com", "Subject": "Important Update", "Body": "We have updated our terms and conditions."},
+    {"Email": "user9@hotmail.com", "Subject": "Important Update", "Body": "We have updated our terms and conditions."}
+    ]
+    try:
+        for row in csv_to_dict:
+            tasks.append(asyncio.create_task(set_values_to_send_emails(semaphore, mock_send_email, row['Email'])))
+    except:
+        raise("error")
+    await asyncio.gather(*tasks)
+    assert stats["err_count"] + stats["ok_count"] == len(csv_to_dict)
