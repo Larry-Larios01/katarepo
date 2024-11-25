@@ -3,7 +3,8 @@ import random
 import csv 
 import time
 from collections.abc import Iterable
-
+from typing import TypedDict
+from itertools import batched
 
 
 def create_mock_send_email(fail_rate=0.2, max_sleep_time=5):
@@ -23,8 +24,15 @@ def create_mock_send_email(fail_rate=0.2, max_sleep_time=5):
             
 
 async def sender(queue, send_email_func, results):
+    tasks = []
+    batch = []
     while True:
-        batch = await queue.get()  # Obtener un lote de la cola
+        while not queue.empty():
+            item = await queue.get()
+            batch.append(item)
+            queue.task_done()
+            
+
         tasks = [send_email_func(email) for email in batch]
 
         # Procesar todas las tareas del lote
@@ -42,36 +50,62 @@ async def sender(queue, send_email_func, results):
                 results["ok_time"]+= float(response.split()[-2])
                 
 
-        queue.task_done()    
+class Result(TypedDict):
+    time_total: int
+    err_count: int
+    ok_count: int
+
     
 
 async def set_values_to_send_emails(rows: Iterable[dict], concurrency: int, send_email_func):
-    concurrency = int(concurrency)
-    queue = asyncio.Queue()
-    batch = []
-    results = {"err_count": 0, "ok_count": 0, "err_time": 0, "ok_time":0, "total_time":0}
-    
-    for i in range(0, len(rows), concurrency):
-        batch = [row["Email"] for row in rows[i:i + concurrency]]
-        await queue.put(batch)
+    if concurrency <= 0:
+        concurrency = 1
 
-    
+    do_continue = True
+    result = Result(time_total=0, err_count=0, ok_count=0)
 
-    
-    consumers = [
-        asyncio.create_task(sender(queue, send_email_func, results))
-        for _ in range(concurrency)
-    ]
-         
+    start = time.time()
+    this_iter = iter(rows)
+    while do_continue:
+        tasks = []
+        for _ in range(concurrency):
+            try:
+                row = next(this_iter)
+                email = row["Email"]
+                task = asyncio.create_task(send_email_func(email))
+                tasks.append(task)
+            except StopIteration:
+                do_continue = False
+                break
+
+        if not do_continue and not tasks:
+            break
         
-    await queue.join()
-    
-    for task in consumers:
-        task.cancel()
+        response = await asyncio.gather(*tasks, return_exceptions=True)
+        for res in response:
+            if isinstance(res, Exception):
+                result["err_count"] += 1
+                continue
 
-    return results
+            result["ok_count"] += 1
 
+    end = time.time()
+
+
+    result["time_total"] = end - start
+
+
+    return result
         
+
+
+def chunked(source: Iterable, size=int)-> Iterable[list]:
+    list_batches= []
+    for batch in batched(source, size):
+        list_batches.append(batch)
+    return list_batches
+
+
 
 
 async def run_csv(path, fail_rate, concurrency): 
@@ -97,13 +131,7 @@ async def run_csv(path, fail_rate, concurrency):
     return results
 
 
-class Results():
-    def __init__(self, ok_time, ok_count, err_count, err_time, time_total):
-        self.ok_time = ok_time
-        self.ok_count = ok_count
-        self.err_count = err_count
-        self.err_time = err_time
-        self.time_total = time_total
+
         
             
 

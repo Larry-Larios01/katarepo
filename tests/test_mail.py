@@ -1,4 +1,4 @@
-from send_email.mail import  set_values_to_send_emails, create_mock_send_email
+from send_email.mail import  set_values_to_send_emails, create_mock_send_email, chunked
 import asyncio
 import time
 import pytest
@@ -99,3 +99,35 @@ async def test_given_we_have_a_to_send_mails_when_we_add_the_fail_time_plus_ok_t
     results = await set_values_to_send_emails(csv_to_dict,concurrency=10,send_email_func=mock_send_email)
     #then
     assert results["err_time"]+results["ok_time"] <= 5
+    
+
+
+
+@pytest.mark.asyncio
+async def test_given_we_have_a_iterable_when_we_chunked():
+    
+    #given
+    csv_to_dict = [
+    {"Email": "user0@gmail.com", "Subject": "Account Activation", "Body": "We have updated our terms and conditions."},
+    {"Email": "user1@example.com", "Subject": "Important Update", "Body": "Here is your invoice for the recent purchase."},
+    {"Email": "user2@hotmail.com", "Subject": "Your Invoice", "Body": "Thank you for signing up with us!"},
+    {"Email": "user3@outlook.com", "Subject": "Welcome!", "Body": "Here is your invoice for the recent purchase."},
+    {"Email": "user4@outlook.com", "Subject": "Your Invoice", "Body": "Here is your invoice for the recent purchase."},
+    {"Email": "user5@hotmail.com", "Subject": "Account Activation", "Body": "Check out our latest news and updates!"},
+    {"Email": "user6@gmail.com", "Subject": "Important Update", "Body": "Here is your invoice for the recent purchase."},
+    {"Email": "user7@outlook.com", "Subject": "Your Invoice", "Body": "Here is your invoice for the recent purchase."},
+    {"Email": "user8@hotmail.com", "Subject": "Important Update", "Body": "We have updated our terms and conditions."},
+    {"Email": "user9@hotmail.com", "Subject": "Important Update", "Body": "We have updated our terms and conditions."}
+    ]
+    results = chunked(csv_to_dict,5)
+    
+    for result in results:
+
+        print(result)
+
+    assert len(results)==2
+
+
+
+
+
