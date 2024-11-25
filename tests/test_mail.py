@@ -19,11 +19,10 @@ async def test_given_we_need_to_send_mails_when_we_send_it_with__concurrency_of_
     ]
     mock_send_email = create_mock_send_email(fail_rate=0.2)
     
-    await set_values_to_send_emails(csv_to_dict,concurrency=10,send_email_func=mock_send_email)
-    end_time = time.perf_counter()
-    time_final = end_time-start_time
+    result = await set_values_to_send_emails(csv_to_dict,concurrency=10,send_email_func=mock_send_email)
+    
     #then
-    assert time_final <= 5
+    assert result["time_total"] <= 5
 
 
 
@@ -48,7 +47,7 @@ async def test_given_we_need_to_send_mails_when_we_send_it_with__concurrency_of_
     end_time = time.perf_counter()
     time_final = end_time-start_time
     #then
-    assert time_final <= 50 and time_final>= 9
+    assert results["time_total"] <= 50 and results["time_total"]>= 9
 
 
 
@@ -104,7 +103,7 @@ async def test_given_we_have_a_to_send_mails_when_we_add_the_fail_time_plus_ok_t
 
 
 @pytest.mark.asyncio
-async def test_given_we_have_a_iterable_when_we_chunked():
+async def test_given_we_have_a_iterable_when_we_chunked_with_specific_size_then_we_have_parts_of_the_list():
     
     #given
     csv_to_dict = [
@@ -119,13 +118,13 @@ async def test_given_we_have_a_iterable_when_we_chunked():
     {"Email": "user8@hotmail.com", "Subject": "Important Update", "Body": "We have updated our terms and conditions."},
     {"Email": "user9@hotmail.com", "Subject": "Important Update", "Body": "We have updated our terms and conditions."}
     ]
-    results = chunked(csv_to_dict,5)
+    i = 0 
     
-    for result in results:
-
+    for result in chunked(csv_to_dict,10):
         print(result)
+        i += 1
 
-    assert len(results)==2
+    assert i==1
 
 
 

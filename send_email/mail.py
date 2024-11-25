@@ -61,32 +61,21 @@ async def set_values_to_send_emails(rows: Iterable[dict], concurrency: int, send
     if concurrency <= 0:
         concurrency = 1
 
-    do_continue = True
+    
     result = Result(time_total=0, err_count=0, ok_count=0)
 
     start = time.time()
-    this_iter = iter(rows)
-    while do_continue:
-        tasks = []
-        for _ in range(concurrency):
-            try:
-                row = next(this_iter)
-                email = row["Email"]
-                task = asyncio.create_task(send_email_func(email))
-                tasks.append(task)
-            except StopIteration:
-                do_continue = False
-                break
-
-        if not do_continue and not tasks:
-            break
+    for batch in chunked(rows, concurrency):
+        tasks = [asyncio.create_task(send_email_func(row["Email"])) for row in batch]
+   
         
-        response = await asyncio.gather(*tasks, return_exceptions=True)
-        for res in response:
+    response = await asyncio.gather(*tasks, return_exceptions=True)
+    for res in response:
             if isinstance(res, Exception):
                 result["err_count"] += 1
+                print(res)
                 continue
-
+            print(res)
             result["ok_count"] += 1
 
     end = time.time()
@@ -100,9 +89,22 @@ async def set_values_to_send_emails(rows: Iterable[dict], concurrency: int, send
 
 
 def chunked(source: Iterable, size=int)-> Iterable[list]:
+    this_iter = iter(source)
     list_batches= []
-    for batch in batched(source, size):
-        list_batches.append(batch)
+    for _ in range(size):
+        try:
+            list_batches.append(next(this_iter))
+        except StopIteration:
+                break
+        if not list_batches:
+             break
+            
+    yield list_batches
+
+
+        
+
+
     return list_batches
 
 
