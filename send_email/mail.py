@@ -20,39 +20,35 @@ def create_mock_send_email(fail_rate=0.2, max_sleep_time=5):
     return mock_send_email
 
 
-
-
-
-async def send_to_semaphore(semaphore, mock_send_email, email, counters):
-    async with semaphore:
-        try:
-            result = await mock_send_email(email)
-            print(result)
-            counters["ok_count"] += 1
-        except Exception as e:
-            print(f"Error: {e}")
-            counters["err_counters"] += 1
+            
     
     
 
-async def set_values_to_send_emails(rows: Iterable[dict], concurrency: int, send_email_func, fail_rate):
+async def set_values_to_send_emails(rows: Iterable[dict], concurrency: int, send_email_func):
     concurrency = int(concurrency)
-    rate= float(fail_rate)
-    mock_send_email= send_email_func(fail_rate=fail_rate)
+    i = 0
+    row_count = len(rows)
     tasks = []
-    semaphore = asyncio.Semaphore(concurrency)
-    counters = {"err_count": 0, "ok_count": 0, "time_total": 0}
-    try:
-        for row in rows:
-             tasks.append(asyncio.create_task(send_to_semaphore(semaphore, mock_send_email, row['Email'], counters)))
-
-    except:
-        raise
-
-        
-    await asyncio.gather(*tasks)
-    return counters
     
+    
+    for row in rows:
+        i+= 1
+        tasks.append(asyncio.create_task(send_email_func(row['Email'])))
+        if i == concurrency or  concurrency >= row_count:
+            results = await asyncio.gather(*tasks, return_exceptions= True)
+            i = 0
+            for result in results:
+                if isinstance(result, Exception):
+                    print(f"Error: {result}")
+                else:
+                    print(result)
+            
+            # Limpiar lista de tareas para el próximo lote
+            tasks = []
+
+
+         
+        
 
 
 
