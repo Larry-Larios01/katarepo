@@ -1,9 +1,9 @@
-from mail import set_values_to_send_emails
+from send_email.mail import set_values_to_send_emails, create_mock_send_email
 import asyncio
 import argparse
 import json
 import time
-
+from send_email.factory_method import DataSourceFactory
 
 async def main():
         start_time = time.perf_counter()
@@ -12,29 +12,32 @@ async def main():
         parser.add_argument("--source", help="you can select the file")
         parser.add_argument("--fail_rate", default="0.2" ,help="the ratio of failure")
         parser.add_argument("--concurrency", default= "5", help="how many parallel mail are send")
-    
+        parser.add_argument("--file_type", default= "csv", help="how many parallel mail are send")
     
         args = parser.parse_args()
 
-        csv_to_dict = [
-    {"Email": "user0@gmail.com", "Subject": "Account Activation", "Body": "We have updated our terms and conditions."},
-    {"Email": "user1@example.com", "Subject": "Important Update", "Body": "Here is your invoice for the recent purchase."},
-    {"Email": "user2@hotmail.com", "Subject": "Your Invoice", "Body": "Thank you for signing up with us!"},
-    {"Email": "user3@outlook.com", "Subject": "Welcome!", "Body": "Here is your invoice for the recent purchase."},
-    {"Email": "user4@outlook.com", "Subject": "Your Invoice", "Body": "Here is your invoice for the recent purchase."},
-    {"Email": "user5@hotmail.com", "Subject": "Account Activation", "Body": "Check out our latest news and updates!"},
-    {"Email": "user6@gmail.com", "Subject": "Important Update", "Body": "Here is your invoice for the recent purchase."},
-    {"Email": "user7@outlook.com", "Subject": "Your Invoice", "Body": "Here is your invoice for the recent purchase."},
-    {"Email": "user8@hotmail.com", "Subject": "Important Update", "Body": "We have updated our terms and conditions."},
-    {"Email": "user9@hotmail.com", "Subject": "Important Update", "Body": "We have updated our terms and conditions."}
-    ]
+        concurrency = int(args.concurrency)
+        fail_rate = float(args.fail_rate)
+        
 
-        stats = await set_values_to_send_emails(csv_to_dict,0.2,10)
+        source = DataSourceFactory.create_data_source(source_type=args.file_type, path=args.source,env=args.env )
+
+ 
+        
+        send_email_func = create_mock_send_email(fail_rate=fail_rate)
+
+        results = await set_values_to_send_emails(source,concurrency,send_email_func)
         end_time = time.perf_counter()
-        time_final = end_time-start_time
-        stats.time_total= time_final
-        results_json = json.dumps(stats.__dict__, indent=4)
-        print(results_json)
+
+        results["total_time"]=end_time-start_time
+
+        result_json = json.dumps(results)
+       
+        print(result_json)
+
+        #stats.time_total= time_final
+        #results_json = json.dumps(stats.__dict__, indent=4)
+        #print(results_json)
 
 
     

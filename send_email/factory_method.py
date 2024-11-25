@@ -16,8 +16,9 @@ class CSVDataSource(DataSource):
             reader = csv.DictReader(csvfile)
             csvfile.seek(0) 
             next(reader)
+            csv_to_dict = list(reader)
 
-        return reader
+        return csv_to_dict
         
 
 

@@ -13,7 +13,7 @@ def create_mock_send_email(fail_rate=0.2, max_sleep_time=5):
         sleep_time = random.uniform(0, max_sleep_time)
         await asyncio.sleep(sleep_time)        # Simulate failure based on the provided fail rate
         if random.random() < fail_rate:
-            raise Exception(f"Failed to send email to {to_address}") 
+            raise Exception(f"Failed to send email to {to_address}, failed after {sleep_time:.2f}") 
 
 
         return f"Email sent to {to_address} successfully after {sleep_time:.2f} seconds"    
@@ -21,35 +21,57 @@ def create_mock_send_email(fail_rate=0.2, max_sleep_time=5):
 
 
             
-    
+
+async def sender(queue, send_email_func, results):
+    while True:
+        batch = await queue.get()  # Obtener un lote de la cola
+        tasks = [send_email_func(email) for email in batch]
+
+        # Procesar todas las tareas del lote
+        responses = await asyncio.gather(*tasks, return_exceptions=True)
+        for response in responses:
+            if isinstance(response, Exception):
+                print(f"Error: {response}")
+                results["err_time"] += float(response.split()[-1])
+                results["err_count"] += 1
+
+            
+            else:
+                print(response)
+                results["ok_count"] += 1
+                results["ok_time"]+= float(response.split()[-2])
+                
+
+        queue.task_done()    
     
 
 async def set_values_to_send_emails(rows: Iterable[dict], concurrency: int, send_email_func):
     concurrency = int(concurrency)
-    i = 0
-    row_count = len(rows)
-    tasks = []
+    queue = asyncio.Queue()
+    batch = []
+    results = {"err_count": 0, "ok_count": 0, "err_time": 0, "ok_time":0, "total_time":0}
     
+    for i in range(0, len(rows), concurrency):
+        batch = [row["Email"] for row in rows[i:i + concurrency]]
+        await queue.put(batch)
+
     
-    for row in rows:
-        i+= 1
-        tasks.append(asyncio.create_task(send_email_func(row['Email'])))
-        if i == concurrency or  concurrency >= row_count:
-            results = await asyncio.gather(*tasks, return_exceptions= True)
-            i = 0
-            for result in results:
-                if isinstance(result, Exception):
-                    print(f"Error: {result}")
-                else:
-                    print(result)
-            
-            # Limpiar lista de tareas para el próximo lote
-            tasks = []
 
-
+    
+    consumers = [
+        asyncio.create_task(sender(queue, send_email_func, results))
+        for _ in range(concurrency)
+    ]
          
         
+    await queue.join()
+    
+    for task in consumers:
+        task.cancel()
 
+    return results
+
+        
 
 
 async def run_csv(path, fail_rate, concurrency): 
