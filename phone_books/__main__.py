@@ -1,5 +1,5 @@
 import contextlib
-
+import psycopg2
 import databases
 import sqlalchemy
 from starlette.applications import Starlette
@@ -8,19 +8,13 @@ from starlette.responses import JSONResponse
 from starlette.routing import Route
 from dotenv import load_dotenv
 import os
+import uvicorn
 
-load_dotenv("prod.env")
-host = os.getenv("DB_HOST")
-DATABASE_URL = host
-
-print(DATABASE_URL)
+load_dotenv(".env")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 
-@contextlib.asynccontextmanager
-async def lifespan(app):
-    await database.connect()
-    yield
-    await database.disconnect()
+
 
 metadata = sqlalchemy.MetaData()
 
@@ -34,6 +28,12 @@ notes = sqlalchemy.Table(
 )
 
 database = databases.Database(DATABASE_URL)
+
+@contextlib.asynccontextmanager
+async def lifespan(app):
+    await database.connect()
+    yield
+    await database.disconnect()
 
 async def insert_user(request):
     data = await request.json()
@@ -64,3 +64,8 @@ app = Starlette(
     routes=routes,
     lifespan=lifespan,
 )
+
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host='0.0.0.0', port=8000)
