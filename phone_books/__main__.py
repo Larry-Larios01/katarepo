@@ -6,9 +6,21 @@ from starlette.applications import Starlette
 from starlette.config import Config
 from starlette.responses import JSONResponse
 from starlette.routing import Route
+from dotenv import load_dotenv
+import os
 
-config = Config('.env')
-DATABASE_URL = config('DATABASE_URL')
+load_dotenv("prod.env")
+host = os.getenv("DB_HOST")
+DATABASE_URL = host
+
+print(DATABASE_URL)
+
+
+@contextlib.asynccontextmanager
+async def lifespan(app):
+    await database.connect()
+    yield
+    await database.disconnect()
 
 metadata = sqlalchemy.MetaData()
 
@@ -45,3 +57,10 @@ routes = [
     Route("/contacts/{id}", endpoint=list_notes, methods=["PATCH"]),
     Route("/contacts/{id}", endpoint=list_notes, methods=["DELETE"]),
 ]
+
+
+
+app = Starlette(
+    routes=routes,
+    lifespan=lifespan,
+)
