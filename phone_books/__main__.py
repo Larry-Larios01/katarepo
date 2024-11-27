@@ -106,7 +106,7 @@ async def insert_user(request: Request):
 
 routes = [
     #Route("/contacts/", endpoint=list_notes, methods=["GET"]),
-    #Route("/contacts", endpoint=insert_user, methods=["POST"]),
+    Route("/contacts", endpoint=insert_user, methods=["POST"]),
     Route("/contacts/{id}", endpoint=get_user, methods=["GET"]),
     #Route("/contacts/{id}", endpoint=list_notes, methods=["PATCH"]),
     #Route("/contacts/{id}", endpoint=list_notes, methods=["DELETE"]),
