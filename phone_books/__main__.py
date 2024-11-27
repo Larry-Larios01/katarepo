@@ -30,6 +30,7 @@ class Contact(TypedDict):
     email: str
     phone: str
     def __init__(self, name, email, phone)-> None: 
+         self.id = id
          self.name = name
          self.email = email
          self.phone = phone
@@ -49,7 +50,7 @@ async def get_user_handler(params: int)-> Contact:
     with conn.cursor() as cursor:
             cursor.execute(f"SELECT * FROM users WHERE id = {params}")
             user = cursor.fetchone()
-            contact = Contact(id=user["id"],name=user["name"], email=user["email"], phone=["phone"])
+            contact = Contact(id=user["id"],name=user["name"], email=user["email"], phone=user["phone"])
     
     return contact
 
