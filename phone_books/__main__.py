@@ -99,18 +99,32 @@ async def insert_user(request: Request):
 
 
 def from_req_partial_update(request: Request)-> Contact:
+    user_id = request.path_params.get("id")
+    dic_to_update = {"id":f"{user_id}"}
     data = request.json()
-    contact = Contact(name=data["name"], email=data["email"], phone=data["phone"])
-    return contact
+    allowed_parameters = ("name", "email", "phone")
+    for key,value in data.items():
+        if key in allowed_parameters:
+             dic_to_update[key] = value
+        
+    return dic_to_update
 
-
-async def partial_update_handler(params: Contact)-> int:
+async def partial_update_handler(params: dict)-> int:
     conn = await get_connection()
+    id = params["id"]
     async with conn.transaction():
-            result = await conn.execute(
-                "INSERT INTO users (name, email, phone) VALUES (%s, %s, %s) RETURNING id, name, email, phone",
-                (params["name"], params["email"], params["phone"])  
-                    )
+            
+            for key, value in params:
+                if key == "id":
+                    continue
+                result = await conn.execute(
+            f"""
+            UPDATE users
+            SET {key} = {value}
+            WHERE id = {id}
+            RETURNING id, name, email, phone
+            """
+        )
             user = await result.fetchone()
             contact = Contact(id=user["id"],name=user['name'], email=user['email'], phone=user["phone"])
     await conn.close()
@@ -134,12 +148,56 @@ async def partial_update(request: Request):
 
 
 
+
+
+
+
+
+
+
+
+def from_req_delete_user(request: Request)-> int:
+    user_id = request.path_params.get("id")
+    return int(user_id)
+
+
+async def delete_user_handler(params: int)-> Contact:
+    conn = await get_connection()
+    async with conn.transaction():
+            result = await conn.execute(
+            """
+            DELETE FROM users
+            WHERE id = %s
+            RETURNING id, name, email, phone
+            """,
+            (params)  # Pasar el ID como un parámetro seguro
+        )
+            user = await result.fetchone()
+            contact = Contact(id=user["id"],name=user["name"], email=user["email"], phone=user["phone"])
+    await conn.close()
+    return contact
+
+
+def to_res_delete_user(contact: Contact)-> JSONResponse:
+     return JSONResponse(contact)
+
+
+
+async def delete_user(request: Request):
+    params = from_req_delete_user(request)
+    result = await delete_user_handler(params)
+    return to_res_delete_user(result)
+
+
+
+
+
 routes = [
     #Route("/contacts/", endpoint=list_notes, methods=["GET"]),
     Route("/contacts", endpoint=insert_user, methods=["POST"]),
     Route("/contacts/{id}", endpoint=get_user, methods=["GET"]),
     Route("/contacts/{id}", endpoint=partial_update, methods=["PATCH"]),
-    #Route("/contacts/{id}", endpoint=list_notes, methods=["DELETE"]),
+    Route("/contacts/{id}", endpoint=delete_user, methods=["DELETE"]),
 ]
 
 
