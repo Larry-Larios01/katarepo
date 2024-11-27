@@ -1,16 +1,11 @@
-import contextlib
-import psycopg2
-import databases
-import sqlalchemy
+
 from starlette.applications import Starlette
-from starlette.config import Config
 from starlette.responses import JSONResponse
 from starlette.routing import Route
 from dotenv import load_dotenv
 import os
 import uvicorn
 from typing import TypedDict
-from http.client import HTTPResponse
 from starlette.requests import Request
 import psycopg
 from psycopg.rows import dict_row
@@ -78,17 +73,23 @@ def from_req_insert_user(request: Request)-> Contact:
 
 async def insert_user_handler(params: Contact)-> int:
     conn = await get_connection()
-    with conn.cursor() as cursor:
-            cursor.execute(
-                f"INSERT INTO users (name, email, phone) VALUES ({params["name"]}, {params["email"]}, {params["phone"]}) RETURNING id"
-            )
-            user_id = cursor.fetchone()["id"]
+    async with conn.transaction():
+            result = await conn.execute(
+                "INSERT INTO users (name, email, phone) VALUES (%s, %s, %s) RETURNING id, name, email, phone",
+                (params["name"], params["email"], params["phone"])  
+                    )
+            user = await result.fetchone()
+            contact = Contact(id=user["id"],name=user['name'], email=user['email'], phone=user["phone"])
+    await conn.close()
             
-    return user_id
+    return contact
 
 
-def to_res_insert_user(user_id: int)-> JSONResponse:
-     return JSONResponse(contact)
+def to_res_insert_user(user: Contact)-> JSONResponse:
+     return JSONResponse({
+        "id": f"{user["id"]}",
+        "message": "was succesful inserted"
+    })
 
 
 
