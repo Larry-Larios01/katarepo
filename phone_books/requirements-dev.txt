@@ -1,0 +1,6 @@
+#de pruebas 
+pytest==8.3.3
+pytest-asyncio==0.24.0
+
+#de entorno
+python-dotenv==1.0.1
