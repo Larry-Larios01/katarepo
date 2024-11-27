@@ -1,4 +1,4 @@
-from phone_books.__main__ import get_user_handler, Contact, insert_user_handler, partial_update_handler
+from phone_books.__main__ import delete_user_handler,get_user_handler, Contact, insert_user_handler, partial_update_handler
 import pytest
 
 #given_we_need_a_specific_contact_when_we_seek_it_for_id_it_then__return_us_the_contact
@@ -28,13 +28,25 @@ async def test_given_we_need_insert_a_specific_contact_when_we_insert_then_it_re
 
 
 @pytest.mark.asyncio
-async def test_given_we_need_update_partial_a_specific_contact_when_we_updateit_then_the_value_change():
-    dictionary = {"id": 1, "name": "juan"}
+async def test_given_we_need_to_delete_an_item_when_we_delete_it_then_that_doesnt_show():
+
+    result =  await delete_user_handler(3)
+
+    assert result["id"] == 1
+    assert result["name"] == "juan"
+    
+
+
+@pytest.mark.asyncio
+async def test_given_we_need_to_udate_specific_part_of_the_item_whe_we_update_it_the_atributes_change():
+    dictionary = {"id": 1, "name": "larry"}
     result =  await partial_update_handler(dictionary)
 
     assert result["id"] == 1
     assert result["name"] == "juan"
     
+
+
 
 
 
