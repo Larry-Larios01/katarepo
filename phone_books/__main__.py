@@ -55,6 +55,10 @@ async def get_user_handler(params: int)-> Contact:
     return contact
 
 
+def to_res_get_user(contact: Contact)-> JSONResponse:
+     return JSONResponse(contact)
+
+
 
 
 
@@ -62,7 +66,7 @@ async def get_user_handler(params: int)-> Contact:
 async def get_user(request: Request):
     params = from_req_get_user(request)
     result = await get_user_handler(params)
-    return to_res(result)
+    return to_res_get_user(result)
 
 
 
