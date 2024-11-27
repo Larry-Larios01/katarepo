@@ -27,6 +27,11 @@ async def test_given_we_need_insert_a_specific_contact_when_we_insert_then_it_re
     assert contact["phone"] == '76125113'
 
 
+#@pytest.mark.asyncio
+#async def test_given_we_need_update_partial_a_specific_contact_when_we_updateit_then_the_value_change():
+  
+
+
 
   
     
