@@ -11,31 +11,16 @@ import os
 import uvicorn
 from typing import TypedDict
 from http.client import HTTPResponse
+from psycopg2.extras import RealDictCursor
 
 load_dotenv(verbose=True)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+def get_connection():
+    return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
 
 
 
-metadata = sqlalchemy.MetaData()
-
-notes = sqlalchemy.Table(
-    "users",
-    metadata,
-    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column("name", sqlalchemy.String),
-    sqlalchemy.Column("email", sqlalchemy.String),
-    sqlalchemy.Column("phone", sqlalchemy.String),
-)
-
-database = databases.Database(DATABASE_URL)
-
-@contextlib.asynccontextmanager
-async def lifespan(app):
-    await database.connect()
-    yield
-    await database.disconnect()
 
 
 class insert_user_param(TypedDict):
@@ -119,7 +104,6 @@ routes = [
 
 app = Starlette(
     routes=routes,
-    lifespan=lifespan,
 )
 
 
