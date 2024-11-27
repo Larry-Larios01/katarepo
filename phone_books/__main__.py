@@ -11,14 +11,15 @@ import os
 import uvicorn
 from typing import TypedDict
 from http.client import HTTPResponse
-from psycopg2.extras import RealDictCursor
 from starlette.requests import Request
+import psycopg
+from psycopg.rows import dict_row
 
 load_dotenv(verbose=True)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 async def get_connection():
-    return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+    return await psycopg.AsyncConnection.connect(DATABASE_URL, row_factory=dict_row)
 
 
 
@@ -29,11 +30,6 @@ class Contact(TypedDict):
     name:str
     email: str
     phone: str
-    def __init__(self, name, email, phone)-> None: 
-         self.id = id
-         self.name = name
-         self.email = email
-         self.phone = phone
         
 class GetResult():
     Contacts: list[Contact]
@@ -47,19 +43,16 @@ def from_req_get_user(request: Request)-> int:
 
 async def get_user_handler(params: int)-> Contact:
     conn = await get_connection()
-    with conn.cursor() as cursor:
-            cursor.execute(f"SELECT * FROM users WHERE id = {params}")
-            user = cursor.fetchone()
+    async with conn.transaction():
+            restult = await conn.execute(f"SELECT * FROM users WHERE id = {params}")
+            user = await restult.fetchone()
             contact = Contact(id=user["id"],name=user["name"], email=user["email"], phone=user["phone"])
-    
+    await conn.close()
     return contact
 
 
 def to_res_get_user(contact: Contact)-> JSONResponse:
      return JSONResponse(contact)
-
-
-
 
 
 
@@ -69,6 +62,43 @@ async def get_user(request: Request):
     return to_res_get_user(result)
 
 
+
+
+
+
+
+
+
+
+def from_req_insert_user(request: Request)-> Contact:
+    data = request.json()
+    contact = Contact(name=data["name"], email=data["email"], phone=data["phone"])
+    return contact
+
+
+async def insert_user_handler(params: Contact)-> int:
+    conn = await get_connection()
+    with conn.cursor() as cursor:
+            cursor.execute(
+                f"INSERT INTO users (name, email, phone) VALUES ({params["name"]}, {params["email"]}, {params["phone"]}) RETURNING id"
+            )
+            user_id = cursor.fetchone()["id"]
+            
+    return user_id
+
+
+def to_res_insert_user(user_id: int)-> JSONResponse:
+     return JSONResponse(contact)
+
+
+
+
+
+
+async def insert_user(request: Request):
+    params = from_req_get_user(request)
+    result = await get_user_handler(params)
+    return to_res_get_user(result)
 
 
 
@@ -84,7 +114,7 @@ routes = [
 
 
 app = Starlette(
-    routes=routes,
+    routes=routes
 )
 
 
