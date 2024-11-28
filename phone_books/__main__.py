@@ -111,19 +111,28 @@ def from_req_partial_update(request: Request)-> Contact:
 
 async def partial_update_handler(params: dict)-> int:
     conn = await get_connection()
-    id = params["id"]
+    id = params.pop("id", None)
+    set_keys = []
+    set_values = []
+    for key, value in params.items():
+        set_keys.append(f"{key} = %s")
+        set_values.append(value)
+
+    set_values.append(id)
+    set_keys_as_text = ", ".join(set_keys)
+
+
+                
     async with conn.transaction():
             
-            for key, value in params:
-                if key == "id":
-                    continue
-                result = await conn.execute(
+            
+            result = await conn.execute(
             f"""
             UPDATE users
-            SET {key} = {value}
-            WHERE id = {id}
+            SET {set_keys_as_text}
+            WHERE id = %s
             RETURNING id, name, email, phone
-            """
+            """, *set_values
         )
             user = await result.fetchone()
             contact = Contact(id=user["id"],name=user['name'], email=user['email'], phone=user["phone"])
@@ -170,7 +179,7 @@ async def delete_user_handler(params: int)-> Contact:
             WHERE id = %s
             RETURNING id, name, email, phone
             """,
-            (params)  # Pasar el ID como un parámetro seguro
+            (params)  
         )
             user = await result.fetchone()
             contact = Contact(id=user["id"],name=user["name"], email=user["email"], phone=user["phone"])
