@@ -27,7 +27,7 @@ class Contact(TypedDict):
     phone: str
         
 class GetResult():
-    Contacts: list[Contact]
+    contacts: list[Contact]
 
 
 
@@ -223,47 +223,53 @@ async def delete_user(request: Request):
 
 
 
-def from_req_filter_contacts(request: Request)-> Contact:
-    user_id = request.path_params.get("id")
-    dic_to_update = {"id":f"{user_id}"}
-    data = request.json()
-    allowed_parameters = ("name", "email", "phone")
-    for key,value in data.items():
-        if key in allowed_parameters:
-             dic_to_update[key] = value
-        
-    return dic_to_update
+def from_req_filter_contacts(request: Request)-> set:
+    filters = request.query_params.get("filter", {})
+    name_filter = filters.get("name")
+    email_filter = filters.get("email")
+    phone_filter = filters.get("phone")
+    valid_filter = []
+    if name_filter:
+        valid_filter.append(name_filter)
+    if email_filter:
+        valid_filter.append(email_filter)
+    if phone_filter:
+        valid_filter.append(phone_filter)
 
-async def filter_contacts_handler(params: dict)-> int:
+    return valid_filter
+    
+
+
+    
+
+
+async def filter_contacts_handler(params: list)-> GetResult:
+    contact_list = Contact()
+    list_contacts = []
+    get_result = GetResult()
     conn = await get_connection()
-    id = params.pop("id", None)
-    set_keys = []
-    set_values = []
-    for i, (key, value) in enumerate(params.items(), start=1):
-        set_keys.append(f"{key} = ${i}")
-        set_values.append(value)
-
-    set_values.append(id)
-    set_keys_as_text = ", ".join(set_keys)
-
-
-                
-    async with conn.cursor() as c:
+    if not params:
+         async with conn.cursor() as c:
             
             
             result = await c.execute(
-            f"""
-            UPDATE users
-            SET {set_keys_as_text}
-            WHERE id = ${len(set_values)}
-            RETURNING id, name, email, phone
-            """, set_values
+            """
+            select * from users
+            """
         )
-            user = await result.fetchone()
-            contact = Contact(id=user["id"],name=user['name'], email=user['email'], phone=user["phone"])
-    await conn.close()
-            
-    return contact
+            contacts = await c.fetchall()
+           
+            for contact in contacts:
+                contact_list["id"] = contact["id"]
+                contact_list["name"] = contact["name"]
+                contact_list["email"] = contact["email"]
+                contact_list["phone"] = contact["phone"]
+                list_contacts.append(contact_list)
+
+            get_result.contacts = list_contacts
+            return get_result.contacts
+
+           
 
 
 def to_res_filter_contacts(user: Contact)-> JSONResponse:
@@ -273,9 +279,9 @@ def to_res_filter_contacts(user: Contact)-> JSONResponse:
     })
 
 async def filter_contacts(request: Request):
-    params = from_req_partial_update(request)
-    result = await partial_update_handler(params)
-    return to_res_partial_update(result)
+    params = from_req_filter_contacts(request)
+    result = await filter_contacts_handler(params)
+    return to_res_filter_contacts(result)
 
 
 
