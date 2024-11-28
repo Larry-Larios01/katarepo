@@ -28,21 +28,23 @@ async def test_given_we_need_insert_a_specific_contact_when_we_insert_then_it_re
 
 
 @pytest.mark.asyncio
-async def test_given_we_need_to_delete_an_item_when_we_delete_it_then_that_doesnt_show():
-
+async def test_given_we_need_to_delete_an_item_when_we_delete_it_then_return_the_id_of_the_user_deleted():
+   #given
+    contact_id = 3
+    #when
     result =  await delete_user_handler(3)
-
-    with pytest.raises(TypeError) as excinfo:  
-        result_of_seek = await get_user_handler(3)
-        assert str(excinfo.value) == "'NoneType' object is not subscriptable" 
+    #then
+    assert result["id"] == contact_id
     
 
 
 @pytest.mark.asyncio
 async def test_given_we_need_to_udate_specific_part_of_the_item_whe_we_update_it_the_atributes_change():
+   #given
     dictionary = {"id": 1, "name": "larry"}
+    #when
     result =  await partial_update_handler(dictionary)
-
+    #then
     assert result["id"] == 1
     assert result["name"] == "larry"
     

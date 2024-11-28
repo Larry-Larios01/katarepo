@@ -171,24 +171,27 @@ def from_req_delete_user(request: Request)-> int:
 
 
 async def delete_user_handler(params: int)-> Contact:
+    contact = await get_user_handler(params)
     conn = await get_connection()
-    async with conn.transaction():
-            result = await conn.execute(
+    async with conn.cursor() as c:
+        
+
+            await c.execute(
             """
             DELETE FROM users
-            WHERE id = %s
-            RETURNING id, name, email, phone
+            WHERE id = $1
             """,
-            (params)  
-        )
-            user = await result.fetchone()
-            contact = Contact(id=user["id"],name=user["name"], email=user["email"], phone=user["phone"])
+            [params]  )
+        
+            
     await conn.close()
+    await c.close()
     return contact
 
 
-def to_res_delete_user(contact: Contact)-> JSONResponse:
-     return JSONResponse(contact)
+def to_res_delete_user(params:Contact)-> JSONResponse:
+    message = {"message": f"the user {params['name']}, user id {params["id"]} was succesfully deleted"}
+    return JSONResponse(message)
 
 
 
