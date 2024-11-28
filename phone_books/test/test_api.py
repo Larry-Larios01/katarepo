@@ -32,8 +32,9 @@ async def test_given_we_need_to_delete_an_item_when_we_delete_it_then_that_doesn
 
     result =  await delete_user_handler(3)
 
-    assert result["id"] == 1
-    assert result["name"] == "juan"
+    with pytest.raises(TypeError) as excinfo:  
+        result_of_seek = await get_user_handler(3)
+        assert str(excinfo.value) == "'NoneType' object is not subscriptable" 
     
 
 
@@ -43,7 +44,7 @@ async def test_given_we_need_to_udate_specific_part_of_the_item_whe_we_update_it
     result =  await partial_update_handler(dictionary)
 
     assert result["id"] == 1
-    assert result["name"] == "juan"
+    assert result["name"] == "larry"
     
 
 

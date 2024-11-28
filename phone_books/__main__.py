@@ -114,8 +114,8 @@ async def partial_update_handler(params: dict)-> int:
     id = params.pop("id", None)
     set_keys = []
     set_values = []
-    for key, value in params.items():
-        set_keys.append(f"{key} = %s")
+    for i, (key, value) in params.items():
+        set_keys.append(f"{key} = %{i}")
         set_values.append(value)
 
     set_values.append(id)
@@ -130,7 +130,7 @@ async def partial_update_handler(params: dict)-> int:
             f"""
             UPDATE users
             SET {set_keys_as_text}
-            WHERE id = %s
+            WHERE id = {len(set_values)}
             RETURNING id, name, email, phone
             """, *set_values
         )
