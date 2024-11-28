@@ -9,12 +9,12 @@ from typing import TypedDict
 from starlette.requests import Request
 import psycopg
 from psycopg.rows import dict_row
-
+from psycopg import AsyncRawCursor
 load_dotenv(verbose=True)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 async def get_connection():
-    return await psycopg.AsyncConnection.connect(DATABASE_URL, row_factory=dict_row)
+    return await psycopg.AsyncConnection.connect(DATABASE_URL, row_factory=dict_row, cursor_factory= AsyncRawCursor)
 
 
 
@@ -69,10 +69,10 @@ def from_req_insert_user(request: Request)-> Contact:
 
 async def insert_user_handler(params: Contact)-> int:
     conn = await get_connection()
-    async with conn.transaction():
-            result = await conn.execute(
-                "INSERT INTO users (name, email, phone) VALUES (%s, %s, %s) RETURNING id, name, email, phone",
-                (params["name"], params["email"], params["phone"])  
+    async with conn.cursor() as c:
+            result = await c.execute(
+                "INSERT INTO users (name, email, phone) VALUES ($1, $2, $3) RETURNING id, name, email, phone",
+                [params["name"], params["email"], params["phone"]]
                     )
             user = await result.fetchone()
             contact = Contact(id=user["id"],name=user['name'], email=user['email'], phone=user["phone"])
@@ -114,8 +114,8 @@ async def partial_update_handler(params: dict)-> int:
     id = params.pop("id", None)
     set_keys = []
     set_values = []
-    for i, (key, value) in params.items():
-        set_keys.append(f"{key} = %{i}")
+    for i, (key, value) in enumerate(params.items(), start=1):
+        set_keys.append(f"{key} = ${i}")
         set_values.append(value)
 
     set_values.append(id)
@@ -123,16 +123,16 @@ async def partial_update_handler(params: dict)-> int:
 
 
                 
-    async with conn.transaction():
+    async with conn.cursor() as c:
             
             
-            result = await conn.execute(
+            result = await c.execute(
             f"""
             UPDATE users
             SET {set_keys_as_text}
-            WHERE id = {len(set_values)}
+            WHERE id = ${len(set_values)}
             RETURNING id, name, email, phone
-            """, *set_values
+            """, set_values
         )
             user = await result.fetchone()
             contact = Contact(id=user["id"],name=user['name'], email=user['email'], phone=user["phone"])
