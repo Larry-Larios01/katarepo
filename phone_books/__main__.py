@@ -223,27 +223,21 @@ async def delete_user(request: Request):
 
 
 
-def from_req_filter_contacts(request: Request)-> set:
-    filters = request.query_params.get("filter", {})
-    name_filter = filters.get("name")
-    email_filter = filters.get("email")
-    phone_filter = filters.get("phone")
-    valid_filter = []
-    if name_filter:
-        valid_filter.append(name_filter)
-    if email_filter:
-        valid_filter.append(email_filter)
-    if phone_filter:
-        valid_filter.append(phone_filter)
+def from_req_filter_contacts(request: Request)-> dict:
+    filters = request.query_params  
 
-    return valid_filter
-    
+    return filters
 
 
     
 
 
-async def filter_contacts_handler(params: list)-> GetResult:
+async def filter_contacts_handler(params: dict)-> GetResult:
+
+    for key , valey in params.items():
+        if key == "filter[name]":
+
+
     contact_list = Contact()
     list_contacts = []
     get_result = GetResult()
