@@ -81,6 +81,24 @@ i think: is a file where we say how we can run the program
 the real meaning: A README.md file is a markdown-formatted file that serves as the primary documentation for a project. It typically provides an overview of the project, instructions on how to install and use it, and other relevant information for users or contributors.
 
 
+14. whats a migration? 
+i think: is change the actual information from a db to another 
+real meaning: A migration is a set of instructions or scripts that manage changes to the structure of a database over time. These changes can include creating tables, altering existing tables, adding or removing columns, or updating constraints. Migrations help ensure that the database schema evolves in a controlled and versioned way, making it easier to track and apply updates consistently across different environments (e.g., development, testing, and production).
+
+
+15. whats LiteralString?
+i think: you must to use the string
+the real menaing: A LiteralString in programming refers to a string that is explicitly written in the code, typically enclosed in quotes. It is a direct representation of a string value, without any processing or interpretation. For example, "Hello, world!" is a LiteralString. It contrasts with dynamic or computed strings, where the value may be derived from variables or expressions.
+
+16. whats the meanig of "/" of that:  def __init__(self, /, sql_up: Query, sql_down: Query)?
+i think: idk 
+the real meaning: In Python, the / symbol in a function or method signature has a specific meaning. It indicates positional-only parameters. This means that the parameters before the / can only be passed positionally (i.e., you can't pass them as keyword arguments when calling the function).
+
+
+17. whats sql_identifier?
+the real meaning: sql.Identifier is a class used to safely represent identifiers in SQL queries, such as table names, column names, or schema names.
+
+
 
 
 
