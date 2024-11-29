@@ -39,7 +39,7 @@ def from_req_get_user(request: Request)-> int:
 async def get_user_handler(params: int)-> Contact:
     conn = await get_connection()
     async with conn.transaction():
-            restult = await conn.execute(f"SELECT * FROM users WHERE id = {params}")
+            restult = await conn.execute("SELECT * FROM users WHERE id = $1",[params])
             user = await restult.fetchone()
             contact = Contact(id=user["id"],name=user["name"], email=user["email"], phone=user["phone"])
     await conn.close()
@@ -225,32 +225,52 @@ async def delete_user(request: Request):
 
 def from_req_filter_contacts(request: Request)-> dict:
     filters = request.query_params  
+    name_filter = filters.get("filter[name]")
+    email_filter = filters.get("filter[email]")
+    phone_filter = filters.get("filter[phone]")
 
-    return filters
+    results = {}
+
+    if name_filter:
+        results["name"] = name_filter
+    if email_filter:
+        results["email"] = email_filter
+    if phone_filter:
+        phone_filter["phone"] = phone_filter
+
+
+    return results
 
 
     
 
 
 async def filter_contacts_handler(params: dict)-> GetResult:
+    set_keys = []
+    set_values = []
+    for i, (key, value) in enumerate(params.items(), start=1):
+        set_keys.append(f"{key} = ${i}")
+        set_values.append(value)
 
-    for key , valey in params.items():
-        if key == "filter[name]":
+    set_keys_as_text = " AND ".join(set_keys)
+
+    if not set_keys:
+        set_keys_as_text = "1=1"
 
 
     contact_list = Contact()
     list_contacts = []
     get_result = GetResult()
     conn = await get_connection()
-    if not params:
-         async with conn.cursor() as c:
+
+    async with conn.cursor() as c:
             
-            
-            result = await c.execute(
-            """
-            select * from users
-            """
+            await c.execute(
+            f"""
+            SELECT * FROM users WHERE {set_keys_as_text}
+            """, set_values
         )
+        
             contacts = await c.fetchall()
            
             for contact in contacts:
@@ -263,6 +283,11 @@ async def filter_contacts_handler(params: dict)-> GetResult:
             get_result.contacts = list_contacts
             return get_result.contacts
 
+
+
+
+            
+           
            
 
 
