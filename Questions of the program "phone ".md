@@ -47,7 +47,7 @@ the real meaning: same of the question 4
 7. what "verbose" means"?
 i think: idk really (sorry)
 
-the real meaning:
+the real meaning: verbose determines whether the .env file-loading process provides detailed feedback during execution. Setting verbose=True helps during debugging or development to ensure environment variables are loaded correctly or to identify any issues.
 
 
 8. what "@contextlib.asynccontextmanager" ?means?
@@ -73,12 +73,12 @@ the real menaing: pyproject.toml is a configuration file used in Python projects
 
 12. what is License file?
 i think: is a file of who can use the program legaly
-the real meaning:
+the real meaning:A License file is a document included with a software project that specifies the terms under which the software can be used, modified, distributed, or shared. It provides a legal framework to protect the creator's rights while granting permissions to users, developers, or contributors.
 
 
 13. what is README.md ?
 i think: is a file where we say how we can run the program
-the real meaning:
+the real meaning: A README.md file is a markdown-formatted file that serves as the primary documentation for a project. It typically provides an overview of the project, instructions on how to install and use it, and other relevant information for users or contributors.
 
 
 
