@@ -29,7 +29,7 @@ i think: check if that object is instanced and if that is a specific datatype i 
 
 the real meaning:
 
-6. how that kinf of atributes works?: 
+6. how that kind of atributes works?: 
 	class UpdateContact(TypedDict):
     name: str | None
     phone: str | None
