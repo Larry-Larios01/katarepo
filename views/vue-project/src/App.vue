@@ -1,6 +1,15 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+<script lang="ts">
+import { defineComponent } from 'vue';
+import HelloWorld from './components/HelloWorld.vue';
+import TheWelcome from './components/TheWelcome.vue';
+
+export default defineComponent({
+  name: 'MainComponent',
+  components: {
+    HelloWorld,
+    TheWelcome,
+  },
+});
 </script>
 
 <template>

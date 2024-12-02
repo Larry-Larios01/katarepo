@@ -35,7 +35,6 @@ async def test_given_we_need_to_delete_an_item_when_we_delete_it_then_return_the
     result =  await delete_user_handler(3)
     #then
     assert result["id"] == contact_id
-    
 
 
 @pytest.mark.asyncio
