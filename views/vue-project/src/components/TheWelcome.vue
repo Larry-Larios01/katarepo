@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import WelcomeItem from './WelcomeItem.vue';
 import DocumentationIcon from './icons/IconDocumentation.vue';
 import ToolingIcon from './icons/IconTooling.vue';
@@ -17,6 +17,13 @@ export default defineComponent({
     CommunityIcon,
     SupportIcon,
   },
+  setup() {
+    const link = ref("https://vuejs.org/sponsor/");
+  
+
+    return { link };
+  },
+
 });
 </script>
 
@@ -95,9 +102,9 @@ export default defineComponent({
       <SupportIcon />
     </template>
     <template #heading>Support Vue</template>
-
+    
     As an independent project, Vue relies on community backing for its sustainability. You can help
     us by
-    <a href="https://vuejs.org/sponsor/" target="_blank" rel="noopener">becoming a sponsor</a>.
+    <a :href="link" target="_blank" rel="noopener">becoming a sponsor</a>.
   </WelcomeItem>
 </template>
