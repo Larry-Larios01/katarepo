@@ -5,18 +5,21 @@ export default {
   setup() {
     const count = ref(0)
 
-    // expose to template and other options API hooks
-    return {
-      count
+    function increment() {
+      // .value is needed in JavaScript
+      count.value++
     }
-  },
 
-  mounted() {
-    console.log(this.count) // 0
+    // don't forget to expose the function as well.
+    return {
+      count,
+      increment
+    }
   }
 }
+
 </script>
 
 <template>
-  <button @click="count++">{{ count }}</button>
+  <button @click="increment">{{ count }}</button>
 </template>
