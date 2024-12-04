@@ -1,7 +1,10 @@
 <script lang="ts">
-import { ref } from 'vue'
+import { ref , defineComponent} from 'vue'
 
-export default {
+export default defineComponent({
+
+    name: 'cronometer',
+  
   setup() {
     
     const count = ref(0)
@@ -38,7 +41,7 @@ export default {
       numbers
     }
   }
-}
+})
 
 
 
