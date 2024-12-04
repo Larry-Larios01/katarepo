@@ -20,6 +20,7 @@ export default {
     function stop() {
     count.value = 0
     clearInterval(cronometer)
+    numbers.value = []
     }
 
     function lap() {
@@ -33,7 +34,8 @@ export default {
       count,
       stop,
       pause, 
-      lap
+      lap,
+      numbers
     }
   }
 }
@@ -51,7 +53,7 @@ export default {
     <p>{{ count }}</p>
 
     <li v-for="lap in numbers">
-  {{ lap }}
-</li>
+        {{ lap }}
+    </li>   
 
 </template>
