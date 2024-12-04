@@ -5,18 +5,23 @@ export default {
   setup() {
     
     const count = ref(0)
-    const interval = ref(0)
-
+    let cronometer = null
     function start() {
-        count.value = count++
-        interval.value = setInterval(count,1000)
+    cronometer = setInterval(() => {
+    count.value++;
+        }, 1000)
+    }
+
+    function stop() {
+    clearInterval(cronometer)
     }
 
     // don't forget to expose the function as well.
     return {
       start,
       count,
-      interval 
+      cronometer,
+      stop
     }
   }
 }
@@ -27,7 +32,7 @@ export default {
 </script>
 
 <template>
-    <button @click="start">
-    {{ interval }}
-  </button>
+    <button @click="start"> start </button>
+    <button @click="stop">stop</button>
+    <p>{{ count }}</p>
 </template>
