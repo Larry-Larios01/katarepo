@@ -3,15 +3,20 @@ import { ref } from 'vue'
 
 export default {
   setup() {
-    const interval = ref(setInterval(start,1000))
+    
+    const count = ref(0)
+    const interval = ref(0)
 
     function start() {
-      
+        count.value = count++
+        interval.value = setInterval(count,1000)
     }
 
     // don't forget to expose the function as well.
     return {
-      interval
+      start,
+      count,
+      interval 
     }
   }
 }
@@ -22,5 +27,7 @@ export default {
 </script>
 
 <template>
-    <p>{{ interval }}</p>
+    <button @click="start">
+    {{ interval }}
+  </button>
 </template>
