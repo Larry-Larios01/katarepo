@@ -59,9 +59,9 @@ export default defineComponent({
 </script>
 
 <template>
-    <button @click="start"> start </button>
-    <button @click="pause">pause</button>
-    <button @click="stop"> stop </button>
+    <button v-on:click="start"> start </button>
+    <button v-on:click="pause">pause</button>
+    <button v-on:click="stop"> stop </button>
     <button v-show="evaluate()" @click="lap">lap</button>
     <p>{{ count }}</p>
 
