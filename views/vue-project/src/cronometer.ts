@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import App from './App_cronometer.vue'
+import App from './AppCronometer.vue'
 
 
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-import { isTemplateExpression } from 'typescript';
 import { ref , defineComponent} from 'vue'
 
 export default defineComponent({
@@ -8,7 +7,8 @@ export default defineComponent({
 
     props: {
     players: {
-      type: Number
+      type: Number,
+      default:"unknow"
     },
     laps: {
         type: Number,
@@ -39,7 +39,8 @@ export default defineComponent({
 
     // don't forget to expose the function as well.
     return {
-      inputs
+      inputs,
+      submitValues
  
     }
   }
@@ -50,15 +51,14 @@ export default defineComponent({
 
 <template>
   <div>
-    <div v-for="(input, index) in inputs" :key="index">
-      <label :for="'input-' + index">Input {{ index + 1 }}</label>
+    <div v-for="n in players">
       <input
         type="text"
-        v-model="inputs[index]"
+        v-model="inputs[n]"
         placeholder="Enter value"
       />
     </div>
-    <button v-on:click="submitValues()>Submit</button>
+    <button v-on:click="submitValues()">Submit</button>
   </div>
 </template>
 
