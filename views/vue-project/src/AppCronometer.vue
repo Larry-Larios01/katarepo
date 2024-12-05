@@ -13,6 +13,6 @@ export default defineComponent({
 
 <template>
 
-<Competition></Competition>
+<Competition players="6"></Competition>
 
 </template>

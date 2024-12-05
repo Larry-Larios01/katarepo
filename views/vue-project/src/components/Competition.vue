@@ -8,7 +8,7 @@ export default defineComponent({
     props: {
     players: {
       type: Number,
-      default:"unknow"
+      default:5
     },
     laps: {
         type: Number,
@@ -26,7 +26,7 @@ export default defineComponent({
 
    function submitValues()
    {
-    console.log(inputs)
+    alert(inputs.value)
 
    }
 
@@ -52,9 +52,10 @@ export default defineComponent({
 <template>
   <div>
     <div v-for="n in players">
+      {{ n }}
       <input
         type="text"
-        v-model="inputs[n]"
+        v-model="inputs[n-1]"
         placeholder="Enter value"
       />
     </div>
