@@ -1,58 +1,63 @@
 <script lang="ts">
-import { ref , defineComponent} from 'vue'
+import { ref, defineComponent } from 'vue';
 
 export default defineComponent({
+  name: 'cronometer',
 
-    name: 'cronometer',
-  
-  setup() {
-    
-    const count = ref(0)
-    let cronometer : number;
+  props: {
+    laps: {
+      type: Number,  
+      default: 10,   
+    },
+  },
+
+  setup(props) { 
+    const count = ref(0);
+    let cronometer: number;
     const numbers = ref<number[]>([]);
+
     function start() {
-    cronometer = setInterval(() => {
-    count.value++;
-        }, 1000)
+      cronometer = setInterval(() => {
+        count.value++;
+      }, 1000);
     }
 
     function pause() {
-    clearInterval(cronometer)
+      clearInterval(cronometer);
     }
 
     function stop() {
-    count.value = 0
-    clearInterval(cronometer)
-    numbers.value = []
+      count.value = 0;
+      clearInterval(cronometer);
+      numbers.value = [];
     }
 
     function lap() {
-        numbers.value.push(count.value)
-    
+      numbers.value.push(count.value);
     }
 
-    // don't forget to expose the function as well.
+    
+    const evaluate = () => numbers.value.length < props.laps;
+
+    
     return {
       start,
       count,
       stop,
-      pause, 
+      pause,
       lap,
-      numbers
-    }
-  }
-})
-
-
-
-
+      numbers,
+      evaluate,
+    };
+  },
+});
 </script>
 
 <template>
     <button @click="start"> start </button>
     <button @click="pause">pause</button>
     <button @click="stop"> stop </button>
-    <button @click="lap">lap</button>
+    <button v-show="evaluate()" @click="lap">lap</button>
     <p>{{ count }}</p>
 
     <li v-for="lap in numbers">

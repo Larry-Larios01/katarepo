@@ -13,7 +13,7 @@ export default defineComponent({
 
 <template>
 
-<cronometer>  </cronometer>
+<cronometer laps="5">  </cronometer>
 
 <cronometer>  </cronometer>
 
