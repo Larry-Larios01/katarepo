@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import cronometer from './components/cronometer.vue';
+import cronometer from './components/Cronometer.vue';
 
 
 export default defineComponent({
@@ -13,7 +13,7 @@ export default defineComponent({
 
 <template>
 
-<cronometer>  </cronometer>
+<cronometer laps="5">  </cronometer>
 
 <cronometer>  </cronometer>
 
