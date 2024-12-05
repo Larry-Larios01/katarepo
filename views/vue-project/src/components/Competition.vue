@@ -17,10 +17,10 @@ export default defineComponent({
 
   },
   
-  setup() {
+  setup(props) {
 
 
-   const inputs = ref<String[]>([]);
+    const inputs = ref(Array(props.players).fill(""));
 
 
 
@@ -51,11 +51,10 @@ export default defineComponent({
 
 <template>
   <div>
-    <div v-for="n in players">
-      {{ n }}
+    <div v-for="(item, index) in inputs" :key="index">
       <input
         type="text"
-        v-model="inputs[n-1]"
+        v-model="inputs[index]"
         placeholder="Enter value"
       />
     </div>
