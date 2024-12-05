@@ -2,14 +2,19 @@
 import { ref, defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'cronometer',
+  name: 'Cronometer',
 
   props: {
     laps: {
-      type: Number,  
+      type: Number, 
       default: 10,   
     },
+    names: {
+      type: String,  
+      default:  "unknow",
+    },
   },
+
 
   setup(props) { 
     const count = ref(0);

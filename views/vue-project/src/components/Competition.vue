@@ -1,13 +1,14 @@
 <script lang="ts">
-import { ref , defineComponent, mergeProps} from 'vue'
+import { isTemplateExpression } from 'typescript';
+import { ref , defineComponent} from 'vue'
 
 export default defineComponent({
 
-    name: 'competition',
+    name: 'Competition',
 
     props: {
     players: {
-      type: Number,
+      type: Number
     },
     laps: {
         type: Number,
@@ -17,6 +18,8 @@ export default defineComponent({
   },
   
   setup() {
+
+
     
    
 
@@ -28,3 +31,6 @@ export default defineComponent({
     }
   }
 })
+
+
+
